@@ -29,9 +29,14 @@ module Rstreamor
 
     def slice_file
       if request.headers['HTTP_RANGE'].present?
-        file.data.byteslice(lower_bound, upper_bound)
+        response = HTTParty.get(file.url, {
+          headers: {"range" => "bytes=#{lower_bound}-#{upper_bound}"}
+          #debug_output: STDOUT, # To show that User-Agent is Httparty
+        })
+        response.body
+        # file.data.byteslice(lower_bound, upper_bound)
       else
-        file.data
+        puts "should flag an error if come to here"
       end
     end
 
